@@ -1,6 +1,8 @@
 defmodule GenReport do
+  alias GenReport.Parser
 
-  def build do
-    # TO DO
+  def build(filename) do
+    filename
+    |> Parser.parse_file()
   end
 end
