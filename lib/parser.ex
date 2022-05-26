@@ -2,7 +2,7 @@ defmodule GenReport.Parser do
   def parse_file(filename) do
     filename
     |> File.stream!()
-    |> Enum.map(fn line -> parse_line(line) end)
+    |> Enum.map(&parse_line/1)
   end
 
   defp parse_line(line) do
@@ -10,9 +10,6 @@ defmodule GenReport.Parser do
       String.trim(line)
       |> String.split(",")
 
-    [hd | Enum.map(tail, fn elem -> String.to_integer(elem) end)]
+    [hd | Enum.map(tail, &String.to_integer/1)]
   end
-
-  # defp handle_file({:ok, file_content}), do: file_content
-  # defp handle_file({:err, _reason}), do: "Error while opening file"
 end
