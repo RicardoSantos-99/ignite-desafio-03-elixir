@@ -12,7 +12,5 @@ defmodule GenReport.Parser do
     |> convert_list()
   end
 
-  defp convert_list([hd | tail]) do
-    [hd | Enum.map(tail, &String.to_integer/1)]
-  end
+  defp convert_list([hd | tail]), do: [hd | Enum.map(tail, &String.to_integer/1)]
 end
