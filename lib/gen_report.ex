@@ -44,53 +44,39 @@ defmodule GenReport do
   end
 
   defp sum_values(
-         [name, hours, _day, month, year],
-         report
+         [name, hour, _day, month, year],
+         %{
+           "all_hours" => hours,
+           "hours_per_month" => months,
+           "hours_per_year" => years
+         }
        ) do
-    all_hours = report["all_hours"]
-    hours_per_month = report["hours_per_month"]
-    hours_per_year = report["hours_per_year"]
+    hours = Map.put(hours, name, hours[name] + hour)
+    months_per_user = Map.put(months[name], month, months[name][month] + hour)
+    years_per_user = Map.put(years[name], year, years[name][year] + hour)
 
-    all_hours = Map.put(all_hours, name, all_hours[name] + hours)
+    months = Map.put(months, name, months_per_user)
+    years = Map.put(years, name, years_per_user)
 
-    hours_per_month =
-      Map.put(
-        hours_per_month,
-        name,
-        Map.put(
-          hours_per_month[name],
-          month,
-          hours_per_month[name][month] + hours
-        )
-      )
-
-    hours_per_year =
-      Map.put(
-        hours_per_year,
-        name,
-        Map.put(
-          hours_per_year[name],
-          year,
-          hours_per_year[name][year] + hours
-        )
-      )
-
-    %{
-      "all_hours" => all_hours,
-      "hours_per_month" => hours_per_month,
-      "hours_per_year" => hours_per_year
-    }
+    build_report(hours, months, years)
   end
 
   def report_acc do
-    all_hours = Enum.into(@available_names, %{}, &{&1, 0})
-    hours_per_year = Enum.into(2016..2020, %{}, &{&1, 0})
-    hours_per_month = Enum.into(@available_months, %{}, &{&1, 0})
+    hours = Enum.into(@available_names, %{}, &{&1, 0})
+    months = Enum.into(@available_months, %{}, &{&1, 0})
+    years = Enum.into(2016..2020, %{}, &{&1, 0})
 
-    %{
-      "all_hours" => all_hours,
-      "hours_per_year" => Enum.into(@available_names, %{}, &{&1, hours_per_year}),
-      "hours_per_month" => Enum.into(@available_names, %{}, &{&1, hours_per_month})
-    }
+    build_report(
+      hours,
+      Enum.into(@available_names, %{}, &{&1, months}),
+      Enum.into(@available_names, %{}, &{&1, years})
+    )
   end
+
+  defp build_report(hours, months, years),
+    do: %{
+      "all_hours" => hours,
+      "hours_per_month" => months,
+      "hours_per_year" => years
+    }
 end
