@@ -36,7 +36,6 @@ defmodule GenReport do
   def build(filename) do
     filename
     |> Parser.parse_file()
-    |> IO.inspect()
     |> Enum.reduce(
       report_acc(),
       fn line, report -> sum_values(line, report) end
